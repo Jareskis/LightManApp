@@ -4,9 +4,9 @@
 //
 //  Created by Jarek Carlson on 6/26/26.
 //
-import SwiftUI
 import Foundation
-
+import SwiftData
+import SwiftUI
 
 enum JobType: Codable {
     case install

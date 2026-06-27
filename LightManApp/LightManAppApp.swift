@@ -13,5 +13,6 @@ struct LightManAppApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: Client.self)
     }
 }
