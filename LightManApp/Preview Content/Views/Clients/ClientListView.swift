@@ -29,8 +29,7 @@ struct ClientListView: View {
             .navigationTitle("Clients")
             .navigationBarTitleDisplayMode(.inline)
         }
-        .sheet(isPresented: $isShowingAdd) { AddClientView()
-        }
+        .sheet(isPresented: $isShowingAdd) { AddClientView() }
     }
 }
 
@@ -42,3 +41,4 @@ struct ClientListView: View {
     return ClientListView()
         .modelContainer(container)
 }
+
