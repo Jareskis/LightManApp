@@ -67,6 +67,7 @@ struct AddJobView: View {
     func saveJob() {
         let job = Job(type: type, date: date, status: status, notes: notes, client: client)
         modelContext.insert(job)
+        client.jobs.append(job)
         try? modelContext.save()
         dismiss()
     }
