@@ -8,16 +8,16 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-enum JobType: Codable {
-    case install
-    case takedown
-    case repair
+enum JobType: String, Codable, CaseIterable {
+    case install = "Install"
+    case takedown = "Take Down"
+    case repair = "Repair"
 }
 
-enum StatusType: Codable {
-    case notStarted
-    case inProgress
-    case finished
+enum StatusType: String, Codable, CaseIterable {
+    case notStarted = "Not Started"
+    case inProgress = "In Progress"
+    case finished = "Finished"
 }
 
 @Model

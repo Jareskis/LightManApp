@@ -52,6 +52,7 @@ struct AddClientView: View {
     func addClient() {
         let client = Client(name: name, email: email, phone: phone, address: address)
         modelContext.insert(client)
+        try? modelContext.save()
         dismiss()
     }
 }

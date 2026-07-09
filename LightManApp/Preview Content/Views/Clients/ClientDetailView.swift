@@ -16,10 +16,13 @@ struct ClientDetailView: View {
     @State private var newAddress = ""
     @State private var isEditing = false
     @State private var isShowingAlert = false
+    @State private var isAddingJob = false
+    
     @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) var dismiss
     
     @Bindable var client: Client
+    @Query var job: [Job]
     
     var body: some View {
         Form {
@@ -57,6 +60,15 @@ struct ClientDetailView: View {
                     Text(client.address)
                 }
             }
+            
+            Section("Jobs"){
+                
+                
+                Button("Add Job"){
+                    isAddingJob = true
+                }
+            }
+            
             Button("Delete Client"){
                 isShowingAlert = true
             }
@@ -66,6 +78,8 @@ struct ClientDetailView: View {
                 }
                 Button("No", role: .cancel) {}
             }
+            .foregroundStyle(.red)
+            .frame(maxWidth: .infinity, alignment: .center)
             
         }
         .toolbar {
@@ -102,6 +116,7 @@ struct ClientDetailView: View {
         try? modelContext.save()
         dismiss()
     }
+    
 }
 
 
