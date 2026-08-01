@@ -41,14 +41,6 @@ struct ContentView: View {
                 Label("Map", systemImage: "mappin")
             }
             .tag(3)
-            
-            NavigationStack {
-                JobListView()
-            }
-            .tabItem {
-                Label("Jobs", systemImage: "light.beacon.max.fill")
-            }
-            .tag(4)
                       
         }
     }

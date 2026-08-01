@@ -25,59 +25,79 @@ struct JobDetailView: View{
     
     
     var body: some View {
-        Form{
-            Section("Client"){
-                Text(job.client?.name ?? "Unknow Client")
-            }
-            
-            Section("Details"){
-                if isEditing {
-                    DatePicker("Job Date", selection: $updatedDate, in: Date.now..., displayedComponents: .date)
-                    Picker("Job Type", selection: $updatedType){
-                        ForEach(JobType.allCases, id: \.self){
-                            Text($0.rawValue)
+        if job.modelContext != nil {
+            Form{
+                Section("Client"){
+                    Text(job.client.name)
+                }
+                
+                Section("Details"){
+                    if isEditing {
+                        DatePicker("Job Date", selection: $updatedDate, in: Date.now..., displayedComponents: .date)
+                        Picker("Job Type", selection: $updatedType){
+                            ForEach(JobType.allCases, id: \.self){
+                                Text($0.rawValue)
+                            }
                         }
+                        Picker("Job Status", selection: $updatedStatus){
+                            ForEach(StatusType.allCases, id: \.self){
+                                Text($0.rawValue)
+                            }
+                        }
+                    } else {
+                        Text(job.date, style: .date)
+                        Text(job.type.rawValue)
+                        Text(job.status.rawValue)
                     }
-                    Picker("Job Status", selection: $updatedStatus){
-                        ForEach(StatusType.allCases, id: \.self){
-                            Text($0.rawValue)
+                }
+                
+                Section("Notes"){
+                    if isEditing {
+                        TextEditor(text: $updatedNotes)
+                    } else {
+                        Text(job.notes ?? "")
+                    }
+                }
+                
+                if !isEditing {
+                    Button("Delete Job") {
+                        isShowingAlert = true
+                    }
+                    .alert("Are you sure you want to delete this job?", isPresented: $isShowingAlert){
+                        Button("Yes", role: .destructive){
+                            deleteJob()
+                        }
+                        Button("No", role: .cancel) {}
+                    }
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                }
+                
+            }
+            .onDisappear{
+                try? modelContext.save()
+            }
+            .toolbar{
+                if !isEditing{
+                    ToolbarItem(placement: .confirmationAction){
+                        Button("Edit"){
+                            updatedDate = job.date
+                            updatedType = job.type
+                            updatedStatus = job.status
+                            updatedNotes = job.notes ?? ""
+                            isEditing = true
                         }
                     }
                 } else {
-                    Text(job.date, style: .date)
-                    Text(job.type.rawValue)
-                    Text(job.status.rawValue)
-                }
-            }
-            
-            Section("Notes"){
-                if isEditing {
-                    TextEditor(text: $updatedNotes)
-                } else {
-                    Text(job.notes ?? "")
-                }
-            }
-        }
-        .toolbar{
-            if !isEditing{
-                ToolbarItem(placement: .confirmationAction){
-                    Button("Edit"){
-                        updatedDate = job.date
-                        updatedType = job.type
-                        updatedStatus = job.status
-                        updatedNotes = job.notes ?? ""
-                        isEditing = true
+                    ToolbarItem(placement: .confirmationAction){
+                        Button("Save"){
+                            saveJob()
+                        }
                     }
-                }
-            } else {
-                ToolbarItem(placement: .confirmationAction){
-                    Button("Save"){
-                        saveJob()
-                    }
-                }
-                ToolbarItem(placement: .cancellationAction){
-                    Button("Cancel"){
-                        isEditing = false
+                    ToolbarItem(placement: .cancellationAction){
+                        Button("Cancel"){
+                            isEditing = false
+                        }
                     }
                 }
             }
@@ -91,6 +111,12 @@ struct JobDetailView: View{
         job.notes = updatedNotes
         try? modelContext.save()
         isEditing = false
+    }
+    
+    func deleteJob() {
+        dismiss()
+        modelContext.delete(job)
+        try? modelContext.save()
     }
     
 }

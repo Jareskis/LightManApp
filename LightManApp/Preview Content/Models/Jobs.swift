@@ -26,9 +26,9 @@ class Job {
     var date : Date
     var status : StatusType
     var notes : String?
-    var client : Client?
+    var client : Client
     
-    init(type: JobType, date: Date, status: StatusType, notes: String?, client: Client?) {
+    init(type: JobType, date: Date, status: StatusType, notes: String?, client: Client) {
         self.type = type
         self.date = date
         self.status = status

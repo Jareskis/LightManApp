@@ -10,13 +10,26 @@ import SwiftData
 
 struct ClientListView: View {
     
+    @State private var searchText = ""
+    
     @State private var isShowingAdd = false
     @Query var clients: [Client]
+    
+    var filteredClients: [Client]{
+        if searchText.isEmpty {
+            return clients.sorted{ $0.name < $1.name}
+        } else {
+            return clients.filter{ client in
+                client.name.localizedCaseInsensitiveContains(searchText)
+            }
+            .sorted { $0.name < $1.name}
+        }
+    }
     
     var body: some View {
         NavigationStack {
             List{
-                ForEach(clients){ client in
+                ForEach(filteredClients){ client in
                     NavigationLink(client.name, destination: ClientDetailView(client : client))
                 }
             }
@@ -24,8 +37,10 @@ struct ClientListView: View {
                 Button("Add Client"){
                     isShowingAdd = true
                 }
+                
 
             }
+            .searchable(text: $searchText)
             .navigationTitle("Clients")
             .navigationBarTitleDisplayMode(.inline)
         }

@@ -14,6 +14,7 @@ struct ClientDetailView: View {
     @State private var newEmail = ""
     @State private var newPhone = ""
     @State private var newAddress = ""
+    
     @State private var isEditing = false
     @State private var isShowingAlert = false
     @State private var isAddingJob = false
@@ -22,7 +23,6 @@ struct ClientDetailView: View {
     @Environment(\.dismiss) var dismiss
     
     @Bindable var client: Client
-    @Query var job: [Job]
     
     var body: some View {
         Form {
@@ -63,6 +63,9 @@ struct ClientDetailView: View {
             
             Section("Jobs"){
                 
+                ForEach(client.jobs){ job in
+                    NavigationLink(job.type.rawValue, destination: JobDetailView(job: job))
+                }
                 
                 Button("Add Job"){
                     isAddingJob = true
@@ -102,12 +105,18 @@ struct ClientDetailView: View {
                     }
                 }
             }
+        .sheet(isPresented: $isAddingJob){ AddJobView(client: client) }
+        .onDisappear{
+            try? modelContext.save()
         }
+        }
+    
     func saveClient() {
         client.name = newName
         client.email = newEmail
         client.phone = newPhone
         client.address = newAddress
+        try? modelContext.save()
         isEditing = false
     }
     
@@ -124,8 +133,11 @@ struct ClientDetailView: View {
  let config = ModelConfiguration(isStoredInMemoryOnly: true)
  let container = try! ModelContainer(for: Client.self, configurations: config)
  let client = Client(name: "Jarek Carlson", email: "jarek@email.com", phone: "506-570-7848", address: "353 Milestone Drive")
+let job = Job(type: .install, date: .now, status: .notStarted, notes: nil, client: client)
  container.mainContext.insert(client)
- return ClientDetailView(client:client)
+    container.mainContext.insert(job)
+    client.jobs.append(job)
+    return ClientDetailView(client:client)
  .modelContainer(container)
  }
 
