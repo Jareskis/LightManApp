@@ -11,7 +11,6 @@ import SwiftData
 struct ClientListView: View {
     
     @State private var searchText = ""
-    
     @State private var isShowingAdd = false
     @Query var clients: [Client]
     
