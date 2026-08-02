@@ -10,10 +10,14 @@ import SwiftData
 
 struct AddJobView: View {
     
-    @State private var type =  JobType.install
+    @State private var type =  ""
     @State private var date = Date.now
     @State private var status = StatusType.notStarted
     @State private var notes = ""
+    @State private var street = ""
+    @State private var city = ""
+    @State private var state = "MT"
+    @State private var zip = ""
     var client: Client
     
     @Environment(\.modelContext) var modelContext
@@ -31,16 +35,25 @@ struct AddJobView: View {
                     Text("Job Date")
                 }
                 
-                Picker("Job Type", selection: $type){
-                    ForEach(JobType.allCases, id: \.self){
-                        Text($0.rawValue)
-                    }
+                Section(){
+                    TextField("Job Type", text: $type)
                 }
                 
                 Picker("Job Status", selection: $status){
                     ForEach(StatusType.allCases, id: \.self){
                         Text($0.rawValue)
                     }
+                }
+                
+                Section("Address") {
+                    TextField("Address", text: $street)
+                    TextField("City", text: $city)
+                    Picker("State", selection: $state){
+                        ForEach(usStates, id: \.self){
+                            state in Text(state)
+                        }
+                    }
+                    TextField("Zip Code", text: $zip)
                 }
                 
                 Section("Job Notes"){
@@ -65,7 +78,7 @@ struct AddJobView: View {
     }
     
     func saveJob() {
-        let job = Job(type: type, date: date, status: status, notes: notes, client: client)
+        let job = Job(type: type, date: date, status: status, notes: notes, client: client, street: street, city: city, state: state, zip: zip)
         modelContext.insert(job)
         client.jobs.append(job)
         try? modelContext.save()
@@ -77,7 +90,15 @@ struct AddJobView: View {
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Client.self, configurations: config)
-    let client = Client(name: "Jarek Carlson", email: "jarek@email.com", phone: "506-570-7848", address: "353 Milestone Drive")
+    let client = Client(
+        name: "Jarek Carlson",
+        email: "jarek@email.com",
+        phone: "506-570-7848",
+        street: "353 Milestone Drive",
+        city: "Bozeman",
+        state: "MT",
+        zip: "59715"
+    )
     container.mainContext.insert(client)
     return AddJobView(client: client)
         .modelContainer(container)

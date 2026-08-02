@@ -13,7 +13,7 @@ struct JobDetailView: View{
     @State private var isEditing = false
     @State private var isShowingAlert = false
     
-    @State private var updatedType = JobType.install
+    @State private var updatedType = ""
     @State private var updatedDate = Date.now
     @State private var updatedStatus = StatusType.notStarted
     @State private var updatedNotes = ""
@@ -34,11 +34,9 @@ struct JobDetailView: View{
                 Section("Details"){
                     if isEditing {
                         DatePicker("Job Date", selection: $updatedDate, in: Date.now..., displayedComponents: .date)
-                        Picker("Job Type", selection: $updatedType){
-                            ForEach(JobType.allCases, id: \.self){
-                                Text($0.rawValue)
+                        Section(){
+                            TextField("Job Type", text: $updatedType)
                             }
-                        }
                         Picker("Job Status", selection: $updatedStatus){
                             ForEach(StatusType.allCases, id: \.self){
                                 Text($0.rawValue)
@@ -46,7 +44,7 @@ struct JobDetailView: View{
                         }
                     } else {
                         Text(job.date, style: .date)
-                        Text(job.type.rawValue)
+                        Text(job.type)
                         Text(job.status.rawValue)
                     }
                 }
@@ -125,7 +123,7 @@ struct JobDetailView: View{
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: Client.self, configurations: config)
     let client = Client(name: "Jarek Carlson", email: "jarek@email.com", phone: "506-570-7848", address: "353 Milestone Drive")
-    let job = Job(type: .install, date: .now, status: .notStarted, notes: nil, client: client)
+    let job = Job(type: "install", date: .now, status: .notStarted, notes: nil, client: client)
     container.mainContext.insert(job)
     return JobDetailView(job: job)
         .modelContainer(container)

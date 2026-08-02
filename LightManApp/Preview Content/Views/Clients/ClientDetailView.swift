@@ -13,7 +13,10 @@ struct ClientDetailView: View {
     @State private var newName = ""
     @State private var newEmail = ""
     @State private var newPhone = ""
-    @State private var newAddress = ""
+    @State private var newStreet = ""
+    @State private var newCity = ""
+    @State private var newState = "MT"
+    @State private var newZip = ""
     
     @State private var isEditing = false
     @State private var isShowingAlert = false
@@ -54,17 +57,26 @@ struct ClientDetailView: View {
             }
             Section("Address") {
                 if isEditing {
-                    TextField(client.address, text: $newAddress)
-                        .textContentType(.fullStreetAddress)
+                    TextField(client.street, text: $newStreet)
+                    TextField(client.city, text: $newCity)
+                    Picker(client.state, selection: $newState){
+                        ForEach(usStates, id: \.self) {
+                            state in Text(state)
+                        }
+                    }
+                    TextField(client.zip, text: $newZip)
                 } else {
-                    Text(client.address)
+                    Text(client.street)
+                    Text(client.city)
+                    Text(client.state)
+                    Text(client.zip)
                 }
             }
             
             Section("Jobs"){
                 
                 ForEach(client.jobs){ job in
-                    NavigationLink(job.type.rawValue, destination: JobDetailView(job: job))
+                    NavigationLink(job.type, destination: JobDetailView(job: job))
                 }
                 
                 Button("Add Job"){
@@ -92,7 +104,10 @@ struct ClientDetailView: View {
                         newName = client.name
                         newEmail = client.email ?? ""
                         newPhone = client.phone ?? ""
-                        newAddress = client.address
+                        newStreet = client.street
+                        newCity = client.city
+                        newState = client.state
+                        newZip = client.zip
                         isEditing = true
                     }
                 }
@@ -101,7 +116,13 @@ struct ClientDetailView: View {
                     Button("Save"){
                         saveClient()
                         }
-                    .disabled(newName.isEmpty || newAddress.isEmpty || (newEmail.isEmpty && newPhone.isEmpty))
+                    .disabled(
+                        newName.isEmpty ||
+                        newStreet.isEmpty ||
+                        newCity.isEmpty ||
+                        newState.isEmpty ||
+                        newZip.isEmpty ||
+                        (newEmail.isEmpty && newPhone.isEmpty))
                     }
                 }
             }
@@ -115,7 +136,10 @@ struct ClientDetailView: View {
         client.name = newName
         client.email = newEmail
         client.phone = newPhone
-        client.address = newAddress
+        client.street = newStreet
+        client.city = newCity
+        client.state = newState
+        client.zip = newZip
         try? modelContext.save()
         isEditing = false
     }
@@ -130,14 +154,32 @@ struct ClientDetailView: View {
 
 
 #Preview {
- let config = ModelConfiguration(isStoredInMemoryOnly: true)
- let container = try! ModelContainer(for: Client.self, configurations: config)
- let client = Client(name: "Jarek Carlson", email: "jarek@email.com", phone: "506-570-7848", address: "353 Milestone Drive")
-let job = Job(type: .install, date: .now, status: .notStarted, notes: nil, client: client)
- container.mainContext.insert(client)
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: Client.self, configurations: config)
+    let client = Client(
+        name: "Jarek Carlson",
+        email: "jarek@email.com",
+        phone: "506-570-7848",
+        street: "353 Milestone Drive",
+        city: "Bozeman",
+        state: "MT",
+        zip: "59715"
+    )
+    let job = Job(
+        type: "Install",
+        date: .now,
+        status: .notStarted,
+        notes: nil,
+        street: "353 Milestone Drive",
+        city: "Bozeman",
+        state: "MT",
+        zip: "59715",
+        client: client
+    )
+    container.mainContext.insert(client)
     container.mainContext.insert(job)
     client.jobs.append(job)
-    return ClientDetailView(client:client)
- .modelContainer(container)
- }
+    return ClientDetailView(client: client)
+        .modelContainer(container)
+}
 

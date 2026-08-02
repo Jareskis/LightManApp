@@ -30,7 +30,7 @@ struct ScheduleView: View {
                         ForEach(jobsByDay[day] ?? []) { job in
                             NavigationLink(destination: JobDetailView(job : job)) {
                                 VStack(alignment: .leading) {
-                                    Text(job.type.rawValue)
+                                    Text(job.type)
                                         .font(.headline)
                                     Text(job.client.name)
                                         .font(.subheadline)

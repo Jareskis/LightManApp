@@ -1,21 +1,38 @@
 
 import Foundation
 import SwiftData
-import MapKit
+
 
 @Model
 class Client {
     var name: String
     var email: String?
     var phone : String?
-    var address : String //Figure out how to store address
+    var street : String
+    var city : String
+    var state : String
+    var zip : String
+    var latitude : Double?
+    var longitude : Double?
     @Relationship(deleteRule: .cascade) var jobs : [Job]
     
-    init(name: String, email: String?, phone: String?, address: String) {
+    init(name: String,
+         email: String?,
+         phone: String?,
+         street: String,
+         city: String,
+         state: String,
+         zip: String
+    ){
         self.name = name
         self.email = email
         self.phone = phone
-        self.address = address
+        self.street = street
+        self.city = city
+        self.state = state
+        self.zip = zip
+        self.latitude = nil
+        self.longitude = nil
         self.jobs = []
     }
     
