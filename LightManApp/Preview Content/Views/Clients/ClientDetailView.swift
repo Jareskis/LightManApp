@@ -170,16 +170,15 @@ struct ClientDetailView: View {
         date: .now,
         status: .notStarted,
         notes: nil,
+        client: client,
         street: "353 Milestone Drive",
         city: "Bozeman",
         state: "MT",
-        zip: "59715",
-        client: client
+        zip: "59715"
     )
     container.mainContext.insert(client)
     container.mainContext.insert(job)
     client.jobs.append(job)
     return ClientDetailView(client: client)
-        .modelContainer(container)
 }
 

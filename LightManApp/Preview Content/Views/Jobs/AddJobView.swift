@@ -81,8 +81,15 @@ struct AddJobView: View {
         let job = Job(type: type, date: date, status: status, notes: notes, client: client, street: street, city: city, state: state, zip: zip)
         modelContext.insert(job)
         client.jobs.append(job)
-        try? modelContext.save()
-        dismiss()
+        LocationManager.geocode(street: street, city: city, state: state, zip: zip) { lat, lon in
+            print("Geocoded: \(lat), \(lon)")
+            job.latitude = lat
+            job.longitude = lon
+            try? self.modelContext.save()
+            DispatchQueue.main.async {
+                self.dismiss()
+            }
+        }
     }
     
 }
