@@ -83,6 +83,10 @@ struct AddJobView: View {
         client.jobs.append(job)
         LocationManager.geocode(street: street, city: city, state: state, zip: zip) { lat, lon in
             print("Geocoded: \(lat), \(lon)")
+            print("\(street)")
+            print("\(city)")
+            print("\(state)")
+            print("\(zip)")
             job.latitude = lat
             job.longitude = lon
             try? self.modelContext.save()

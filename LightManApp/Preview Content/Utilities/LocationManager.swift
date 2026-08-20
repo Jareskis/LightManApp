@@ -6,7 +6,6 @@
 //
 
 import CoreLocation
-import UIKit
 
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private let manager = CLLocationManager()
@@ -21,6 +20,9 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         let fullAddress = "\(street), \(city), \(state), \(zip)"
         let geocoder = CLGeocoder()
         geocoder.geocodeAddressString(fullAddress){ placemarks, error in //Here are my parameters(placemarks, error), do this with them
+            if let error = error {
+                print("\(error.localizedDescription)")
+            }
             if let placemark = placemarks?.first,
                let location = placemark.location {
                 completion(location.coordinate.latitude, location.coordinate.longitude)
